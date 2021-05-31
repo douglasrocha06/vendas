@@ -1,6 +1,6 @@
 import pymysql
-from app import app, app2, app3
-from config import mysql, mysql2, mysql3
+from app import app3
+from config import mysql3
 from flask import jsonify
 from flask import flash, request
 from flask_httpauth import HTTPBasicAuth
@@ -16,7 +16,7 @@ def vendas_produ(id_cliente):
         conn = mysql3.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         #Traz todas as vendas de um cliente
-        cursor.execute("SELECT id_vendas, id_cliente, id_produto, date_format(data_venda, GET_FORMAT(DATE,'EUR')) as 'data_venda' from inventario where id_cliente = %s", id_cliente)
+        cursor.execute("SELECT id_vendas, id_cliente, id_produto, date_format(data_venda, GET_FORMAT(DATE,'EUR')) as 'data_venda' from api_inventario.inventario where id_cliente = %s", id_cliente)
         linha = cursor.fetchall()
         
         cliente = requests.get(url = f'http://127.0.0.1:5100/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
@@ -52,7 +52,7 @@ def adicionar_venda():
         data_venda = json['data_venda']
 
         if id_cliente and id_produto and data_venda and request.method == 'POST':
-            sqlQuery = "INSERT INTO inventario(id_cliente, id_produto, data_venda) VALUES(%s, %s, %s)"
+            sqlQuery = "INSERT INTO api_inventario.inventario(id_cliente, id_produto, data_venda) VALUES(%s, %s, %s)"
             dados = (id_cliente, id_produto, data_venda)
             conn = mysql3.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -93,13 +93,13 @@ def atualizar_venda():
         data_venda = json['data_venda']
 
         if id_vendas and id_cliente and id_produto and data_venda and request.method == 'PUT':
-            sqlQuery = "SELECT * FROM inventario where id_vendas=%s"
+            sqlQuery = "SELECT * FROM api_inventario.inventario where id_vendas=%s"
             cursor.execute(sqlQuery, id_vendas)
             linha = cursor.fetchone()
 
             if not linha:
                 return jsonify({'status':'Compra não cadastrada!'})
-            sqlQuery = "UPDATE inventario SET id_cliente=%s, id_produto=%s, data_venda= %s WHERE id_vendas=%s"
+            sqlQuery = "UPDATE api_inventario.inventario SET id_cliente=%s, id_produto=%s, data_venda= %s WHERE id_vendas=%s"
             dados = (id_cliente, id_produto, data_venda, id_vendas)
 
             #Verificação se os IDs estão nas bases
@@ -131,7 +131,7 @@ def deletar_venda(id_vendas):
 	try:
 		conn = mysql3.connect()
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		sqlQuery = "SELECT * FROM inventario where id_vendas=%s"
+		sqlQuery = "SELECT * FROM api_inventario.inventario where id_vendas=%s"
 		cursor.execute(sqlQuery, id_vendas)
 		linha = cursor.fetchone()
 
@@ -175,4 +175,4 @@ def verificacao(login, senha):
 	return usuarios.get(login) == senha
 		
 if __name__ == "__main__":
-    app3.run(debug=True)
+    app3.run(debug=True, host="0.0.0.0", port=80)
