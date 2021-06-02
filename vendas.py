@@ -19,7 +19,7 @@ def vendas_produ(id_cliente):
         cursor.execute("SELECT id_vendas, id_cliente, id_produto, date_format(data_venda, GET_FORMAT(DATE,'EUR')) as 'data_venda' from api_inventario.inventario where id_cliente = %s", id_cliente)
         linha = cursor.fetchall()
         
-        cliente = requests.get(url = f'http://127.0.0.1:5100/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+        cliente = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
 
         catalogo2 = [] 
         produtos = []
@@ -27,7 +27,7 @@ def vendas_produ(id_cliente):
             if i not in produtos:
                 id_produto = i['id_produto']
                 produtos.append(id_produto)
-                catalogo = requests.get(url = f'http://127.0.0.1:5200/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+                catalogo = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
                 catalogo2.append(catalogo.json())
 
         if catalogo2 and produtos:
@@ -58,8 +58,8 @@ def adicionar_venda():
             cursor = conn.cursor(pymysql.cursors.DictCursor)
 
             #Verificação se os IDs estão nas bases
-            cliente = requests.get(url = f'http://127.0.0.1:5100/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
-            catalogo = requests.get(url = f'http://127.0.0.1:5200/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+            cliente = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+            catalogo = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
 
             if cliente.status_code == 404:
                 return jsonify({'status':'Cliente inexistente.'}), 400
@@ -103,8 +103,8 @@ def atualizar_venda():
             dados = (id_cliente, id_produto, data_venda, id_vendas)
 
             #Verificação se os IDs estão nas bases
-            cliente = requests.get(url = f'http://127.0.0.1:5100/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
-            catalogo = requests.get(url = f'http://127.0.0.1:5200/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+            cliente = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
+            catalogo = requests.get(url = f'loadBalancer-djl-1250319016.us-east-1.elb.amazonaws.com/catalogo/{id_produto}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
 
             if cliente.status_code == 404:
                 return jsonify({'status':'Cliente inexistente.'}), 400
