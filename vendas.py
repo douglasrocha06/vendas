@@ -42,7 +42,7 @@ def vendas_produ(id_cliente):
         conn.close()
 
 #Adicionando um registro 
-@app3.route('/cliente/compras', methods=['POST'])
+@app3.route('/compras/clientes', methods=['POST'])
 @auth.login_required
 def adicionar_venda():
     try:
@@ -80,7 +80,7 @@ def adicionar_venda():
         conn.close()
 
 #Atualizando uma venda
-@app3.route('/cliente/compras', methods=['PUT'])
+@app3.route('/compras/clientes', methods=['PUT'])
 @auth.login_required
 def atualizar_venda():
     try:
@@ -125,7 +125,7 @@ def atualizar_venda():
         conn.close()
 
 #Método DELETE
-@app3.route('/clientes/compras/<int:id_vendas>', methods=['DELETE'])
+@app3.route('/compras/clientes/<int:id_vendas>', methods=['DELETE'])
 @auth.login_required
 def deletar_venda(id_vendas):
 	try:
