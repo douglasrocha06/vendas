@@ -93,7 +93,7 @@ def atualizar_venda():
         data_venda = json['data_venda']
 
         if id_vendas and id_cliente and id_produto and data_venda and request.method == 'PUT':
-            sqlQuery = "SELECT * FROM inventario where id_vendas=%s"
+            sqlQuery = "SELECT * FROM api_inventario.inventario where id_vendas=%s"
             cursor.execute(sqlQuery, id_vendas)
             linha = cursor.fetchone()
 
