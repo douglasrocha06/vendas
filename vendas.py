@@ -16,7 +16,7 @@ def vendas_produ(id_cliente):
         conn = mysql3.connect()
         cursor = conn.cursor(pymysql.cursors.DictCursor)
         #Traz todas as vendas de um cliente
-        cursor.execute("SELECT id_vendas, id_cliente, id_produto, date_format(data_venda, GET_FORMAT(DATE,'EUR')) as 'data_venda' from inventario where id_cliente = %s", id_cliente)
+        cursor.execute("SELECT id_vendas, id_cliente, id_produto, date_format(data_venda, GET_FORMAT(DATE,'EUR')) as 'data_venda' from api_inventario.inventario where id_cliente = %s", id_cliente)
         linha = cursor.fetchall()
         
         cliente = requests.get(url = f'http://loadbalancer-djl-1817009558.us-east-1.elb.amazonaws.com/clientes/{id_cliente}', headers = {'Authorization':'Basic ZG91Z2xhczoxMjM='})
@@ -52,7 +52,7 @@ def adicionar_venda():
         data_venda = json['data_venda']
 
         if id_cliente and id_produto and data_venda and request.method == 'POST':
-            sqlQuery = "INSERT INTO inventario(id_cliente, id_produto, data_venda) VALUES(%s, %s, %s)"
+            sqlQuery = "INSERT INTO api_inventario.inventario(id_cliente, id_produto, data_venda) VALUES(%s, %s, %s)"
             dados = (id_cliente, id_produto, data_venda)
             conn = mysql3.connect()
             cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -99,7 +99,7 @@ def atualizar_venda():
 
             if not linha:
                 return jsonify({'status':'Compra não cadastrada!'})
-            sqlQuery = "UPDATE inventario SET id_cliente=%s, id_produto=%s, data_venda= %s WHERE id_vendas=%s"
+            sqlQuery = "UPDATE api_inventario.inventario SET id_cliente=%s, id_produto=%s, data_venda= %s WHERE id_vendas=%s"
             dados = (id_cliente, id_produto, data_venda, id_vendas)
 
             #Verificação se os IDs estão nas bases
@@ -131,7 +131,7 @@ def deletar_venda(id_vendas):
 	try:
 		conn = mysql3.connect()
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		sqlQuery = "SELECT * FROM inventario where id_vendas=%s"
+		sqlQuery = "SELECT * FROM api_inventario.inventario where id_vendas=%s"
 		cursor.execute(sqlQuery, id_vendas)
 		linha = cursor.fetchone()
 
@@ -139,7 +139,7 @@ def deletar_venda(id_vendas):
 		    return jsonify({'status':'Registro de venda inexistente!'}), 404
 
 		else:
-			cursor.execute("DELETE FROM inventario where id_vendas=%s", (id_vendas))
+			cursor.execute("DELETE FROM api_inventario.inventario where id_vendas=%s", (id_vendas))
 			conn.commit()
 			resposta = jsonify({'Status':'Registro de venda exluído com sucesso!'})
 			resposta.status_code = 200
